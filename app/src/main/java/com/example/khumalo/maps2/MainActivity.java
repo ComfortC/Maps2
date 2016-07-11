@@ -1,12 +1,12 @@
 package com.example.khumalo.maps2;
 
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,15 +14,18 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    protected static final String Tag = "Locations Services Lesson";
+    protected static final String LOG_TAG = "Locations Services Lesson";
     protected GoogleApiClient mGoogleApiClient;
     protected Location mLastLocation;
     protected TextView mLatitudetext;
     protected TextView mLongtudetext;
+    protected LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,41 +66,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-           mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(mLastLocation!=null){
-            mLatitudetext.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongtudetext.setText(String.valueOf(mLastLocation.getLongitude()));
-        }
+
+        mLocationRequest = LocationRequest.create()
+                .setInterval(1000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.i(LOG_TAG, "GoogleApiClient connection has been suspend");
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
+        mLastLocation = location;
+        mLatitudetext.setText(String.valueOf(mLastLocation.getLatitude()));
+        mLongtudetext.setText(String.valueOf(mLastLocation.getLongitude()));
     }
 
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
 
-    }
 
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Log.i(LOG_TAG, "GoogleApiClient connection has failed");
     }
 
  /*   @Override
