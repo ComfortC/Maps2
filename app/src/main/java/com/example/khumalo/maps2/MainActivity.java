@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,14 +30,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback< Status>{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback< Status>{
 
     protected static final String LOG_TAG = "Locations Services Lesson";
     protected GoogleApiClient mGoogleApiClient;
     private TextView mStatusText;
-    protected ActivityDetectionBroadcastReceiver mBroadcastReceiver;
-    private Button requestUpdateButton;
-    private Button removeUpdateButton;
+
 
 
     @Override
@@ -44,23 +43,11 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mStatusText = (TextView)findViewById(R.id.detectedActivities);
-        removeUpdateButton =(Button)findViewById(R.id.remove_activity_updates_button);
-        requestUpdateButton = (Button)findViewById(R.id.request_activity_updates_button);
-        mBroadcastReceiver = new ActivityDetectionBroadcastReceiver();
+
         buildGoodleApiClient();
 
 
-        removeUpdateButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                removeActivityUpdatesButtonHandler(v);
-            }
-        });
 
-        requestUpdateButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                requestActivityUpdatesButtonHandler(v);
-            }
-        });
     }
 
 
@@ -90,21 +77,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Register the broadcast receiver that informs this activity of the DetectedActivity
-        // object broadcast sent by the intent service.
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
-                new IntentFilter(Constants.BROADCAST_ACTION));
-    }
 
-    @Override
-    protected void onPause() {
-        // Unregister the broadcast receiver that was registered during onResume().
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
-        super.onPause();
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -152,50 +125,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         return super.onOptionsItemSelected(item);
     }*/
 
-    public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver{
-
-        protected final String Tag = "receiver";
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            ArrayList<DetectedActivity> updatedActivities =
-                    intent.getParcelableArrayListExtra(Constants.ACTIVITY_EXTRA);
-
-            String strStatus = "";
-            for(DetectedActivity thisActivity: updatedActivities){
-                strStatus +=  getActivityString(thisActivity.getType()) + thisActivity.getConfidence() + "%\n";
-            }
-            mStatusText.setText(strStatus);
-
-        }
-    }
-
-    public String getActivityString(int detectedActivityType) {
-        Resources resources = this.getResources();
-        switch(detectedActivityType) {
-            case DetectedActivity.IN_VEHICLE:
-                return resources.getString(R.string.in_vehicle);
-            case DetectedActivity.ON_BICYCLE:
-                return resources.getString(R.string.on_bicycle);
-            case DetectedActivity.ON_FOOT:
-                return resources.getString(R.string.on_foot);
-            case DetectedActivity.RUNNING:
-                return resources.getString(R.string.running);
-            case DetectedActivity.STILL:
-                return resources.getString(R.string.still);
-            case DetectedActivity.TILTING:
-                return resources.getString(R.string.tilting);
-            case DetectedActivity.UNKNOWN:
-                return resources.getString(R.string.unknown);
-            case DetectedActivity.WALKING:
-                return resources.getString(R.string.walking);
-            default:
-                return resources.getString(R.string.unidentifiable_activity, detectedActivityType);
-        }
-    }
-
-
-
     private PendingIntent getActivityDetectionPendingIntent() {
         Intent intent = new Intent(this, DetectedActivitiesIntentService.class);
 
@@ -205,31 +134,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
 
-    public void requestActivityUpdatesButtonHandler(View view) {
-        if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(this, getString(R.string.not_connected),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-                mGoogleApiClient,
-                Constants.DETECTION_INTERVAL_IN_MILLISECONDS,
-                getActivityDetectionPendingIntent()
-        ).setResultCallback(this);
-    }
 
-    public void removeActivityUpdatesButtonHandler(View view) {
-        if (!mGoogleApiClient.isConnected()) {
-            Toast.makeText(this, getString(R.string.not_connected), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // Remove all activity updates for the PendingIntent that was used to request activity
-        // updates.
-        ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(
-                mGoogleApiClient,
-                getActivityDetectionPendingIntent()
-        ).setResultCallback(this);
-    }
 
     public void onResult(Status status) {
         if (status.isSuccess()) {
@@ -238,5 +143,10 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         } else {
             Log.e("", "Error adding or removing activity detection: " + status.getStatusMessage());
         }
+    }
+
+    public void addGeofencesButtonHandler(View view) {
+
+
     }
 }

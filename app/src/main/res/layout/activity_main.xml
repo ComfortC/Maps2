@@ -9,32 +9,18 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/request_activity_updates_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:onClick="requestActivityUpdatesButtonHandler"
-        android:text="@string/request_activity_updates" />
+
+
 
     <Button
-        android:id="@+id/remove_activity_updates_button"
+        android:id="@+id/add_geofences_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:onClick="removeActivityUpdatesButtonHandler"
-        android:text="@string/remove_activity_updates" />
-
-    <TextView
-        android:id="@+id/detectedActivities"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/detected_activities_title"
-        android:layout_marginTop="39dp"
-        android:layout_below="@+id/request_activity_updates_button"
+        android:onClick="addGeofencesButtonHandler"
+        android:text="@string/add_geofences"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textColor="#40433e"
-        android:textSize="30dp" />
+        android:layout_marginTop="100dp" />
 
 
 
