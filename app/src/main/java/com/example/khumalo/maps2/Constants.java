@@ -15,53 +15,51 @@
  */
 package com.example.khumalo.maps2;
 
-import android.content.Context;
-import android.content.res.Resources;
+import com.google.android.gms.maps.model.LatLng;
 
-import com.google.android.gms.location.DetectedActivity;
+import java.util.HashMap;
 
 /**
- * Constants used in this sample.
+ * Created by lmoroney on 12/17/14.
  */
 public final class Constants {
 
     private Constants() {
     }
 
-    public static final String PACKAGE_NAME = "com.example.khumalo.maps2";
+    public static final String PACKAGE_NAME = "com.google.android.gms.location.Geofence";
 
-    public static final String BROADCAST_ACTION = PACKAGE_NAME + ".BROADCAST_ACTION";
+    public static final String SHARED_PREFERENCES_NAME = PACKAGE_NAME + ".SHARED_PREFERENCES_NAME";
 
-    public static final String ACTIVITY_EXTRA = PACKAGE_NAME + ".ACTIVITY_EXTRA";
-
-    public static final String SHARED_PREFERENCES_NAME = PACKAGE_NAME + ".SHARED_PREFERENCES";
-
-    public static final String ACTIVITY_UPDATES_REQUESTED_KEY = PACKAGE_NAME +
-            ".ACTIVITY_UPDATES_REQUESTED";
-
-    public static final String DETECTED_ACTIVITIES = PACKAGE_NAME + ".DETECTED_ACTIVITIES";
+    public static final String GEOFENCES_ADDED_KEY = PACKAGE_NAME + ".GEOFENCES_ADDED_KEY";
 
     /**
-     * The desired time between activity detections. Larger values result in fewer activity
-     * detections while improving battery life. A value of 0 results in activity detections at the
-     * fastest possible rate. Getting frequent updates negatively impact battery life and a real
-     * app may prefer to request less frequent updates.
+     * Used to set an expiration time for a geofence. After this amount of time Location Services
+     * stops tracking the geofence.
      */
-    public static final long DETECTION_INTERVAL_IN_MILLISECONDS = 0;
+    public static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
 
     /**
-     * List of DetectedActivity types that we monitor in this sample.
+     * For this sample, geofences expire after twelve hours.
      */
-    protected static final int[] MONITORED_ACTIVITIES = {
-            DetectedActivity.STILL,
-            DetectedActivity.ON_FOOT,
-            DetectedActivity.WALKING,
-            DetectedActivity.RUNNING,
-            DetectedActivity.ON_BICYCLE,
-            DetectedActivity.IN_VEHICLE,
-            DetectedActivity.TILTING,
-            DetectedActivity.UNKNOWN
-    };
+    public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
+            GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000;
+    //public static final float GEOFENCE_RADIUS_IN_METERS = 1609; // 1 mile, 1.6 km
+    public static final float GEOFENCE_RADIUS_IN_METERS = 1; // 1 mile, 1.6 km
 
+    /**
+     * Map for storing information about airports in the San Francisco bay area.
+     */
+    public static final HashMap<String, LatLng> KENILWORTH_AREA = new HashMap<String, LatLng>();
+    static {
+        // San Francisco International Airport.
+        KENILWORTH_AREA.put("Home", new LatLng(-33.9901963,18.4710054));
+
+        // Googleplex.
+        KENILWORTH_AREA.put("Shoping Mall", new LatLng(-33.9901963,18.4745245));
+
+        // Test
+        KENILWORTH_AREA.put("Train Station", new LatLng(-33.9935009,18.4726751));
+    }
 
 }
